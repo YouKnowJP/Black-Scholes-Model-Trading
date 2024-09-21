@@ -9,37 +9,44 @@ Created on Sat Sep 21 14:58:50 2024
 import numpy as np
 import matplotlib.pyplot as plt
 from black_scholes import black_scholes_price, black_scholes_greeks
-from dynamic_hedging import simulate_dynamic_hedging
-import logging
-
-# Configure Logging
-logging.basicConfig(filename='logs/trading.log', 
-                    level=logging.INFO,
-                    format='%(asctime)s %(levelname)s:%(message)s')
 
 def main():
     # Example Parameters
-    S0 = 100        # Initial stock price
-    K = 100         # Strike price
-    T = 1           # Time to maturity (1 year)
-    r = 0.05        # Risk-free rate (5%)
-    sigma = 0.2     # Volatility (20%)
+    S = 100        # Current stock price
+    K = 100        # Strike price
+    T = 1          # Time to maturity (1 year)
+    r = 0.05       # Risk-free rate (5%)
+    sigma = 0.2    # Volatility (20%)
     option_type = 'call'
-    steps = 252     # Daily steps
-    transaction_cost = 0.001  # 0.1% per trade
-
-    logging.info("Starting Dynamic Hedging Simulation")
     
-    # Run Dynamic Hedging Simulation
-    results = simulate_dynamic_hedging(S0, K, T, r, sigma, option_type, steps, transaction_cost)
+    # Calculate Option Price
+    price = black_scholes_price(S, K, T, r, sigma, option_type)
+    print(f"Option Price ({option_type.capitalize()}): {price:.4f}")
     
-    # Output Results
-    print(f"Dynamic Hedging Simulation Completed")
-    print(f"Total Return: {results['Total Return']*100:.2f}%")
-    print(f"Maximum Drawdown: {results['Maximum Drawdown']*100:.2f}%")
-    print(f"Final Portfolio Value: ${results['Final Portfolio Value']:.2f}")
+    # Calculate Greeks
+    greeks = black_scholes_greeks(S, K, T, r, sigma, option_type)
+    for greek, value in greeks.items():
+        print(f"{greek}: {value:.4f}")
     
-    # Additional analysis can be added here
+    # Delta Hedging Example
+    # Assume you hold 1 call option
+    option_delta = greeks['Delta']
+    # To delta hedge, short delta shares
+    hedge_shares = -option_delta
+    print(f"Number of Shares to Hedge: {hedge_shares:.4f}")
+    
+    # Visualization of Delta as a function of underlying price
+    S_range = np.linspace(50, 150, 100)
+    delta_values = [black_scholes_greeks(s, K, T, r, sigma, option_type)['Delta'] for s in S_range]
+    
+    plt.figure(figsize=(10,6))
+    plt.plot(S_range, delta_values, label='Delta', color='blue')
+    plt.title('Delta vs. Underlying Asset Price')
+    plt.xlabel('Underlying Price ($)')
+    plt.ylabel('Delta')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
 
 if __name__ == "__main__":
     main()
