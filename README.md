@@ -53,3 +53,27 @@ Run the main script to calculate option prices, Greeks, and perform delta hedgin
 
 ```bash
 python main.py
+```
+## Project Outline
+black-scholes-trading-model/
+├── black_scholes.py
+├── dynamic_hedging.py
+├── risk_management.py
+├── data/
+│   └── historical_data.csv
+├── main.py
+├── backtesting.py
+├── requirements.txt
+├── README.md
+└── logs/
+    └── trading.log
+
+black_scholes.py: Core Black-Scholes pricing and Greeks functions.
+dynamic_hedging.py: Functions for dynamic delta hedging.
+risk_management.py: Risk management utilities.
+data/: Directory to store historical data for backtesting.
+main.py: Entry point for live trading simulation.
+backtesting.py: Backtesting framework.
+requirements.txt: Project dependencies.
+README.md: Project documentation.
+logs/: Directory for log files.
